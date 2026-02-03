@@ -1,0 +1,22 @@
+{
+  "name": "vscode-anura",
+  "version": "1.91.1",
+  "workspaces": [
+    "./myDav",
+    "./myExt"
+  ],
+  "scripts": {
+    "build": "cd myDav && pnpm build",
+    "package": "bash package.sh",
+    "start": "node ./http.js"
+  },
+  "dependencies": {
+    "@types/serviceworker": "^0.0.182",
+    "comlink": "^4.4.2",
+    "express": "^4.17.1",
+    "vscode-web": "^1.91.1"
+  },
+  "stackblitz": {
+    "startCommand": "npm start"
+  }
+}
