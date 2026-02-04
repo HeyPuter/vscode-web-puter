@@ -26,6 +26,11 @@ let routes = {
             console.log("MORTAL's folder path: ", thing);
             return new Response(thing);
         },
+        ['/syscall/getUsername']: async function (response) {
+            await readyPromise;
+            
+            return new Response(await sharedObject.getUsername());
+        },
 
         ['/syscall/getToken']: async function (response) {
             await readyPromise;

@@ -14,11 +14,15 @@ async function getFilePath() {
     return (await puter.ui.showFilePicker()).path.replace("~", "/" + (puter.whoami || await puter.getUser()).username);
 }
 async function ensureAuth() {
-    await puter.ui.auth.signIn();
     if (!puter.authToken) {
         await ensureAuth();
     }
 }
+async function getUsername() {
+    await ensureAuth();
+    return ((puter.whoami || await puter.getUser()).username);
+}
+
 
 function initComlink() {
     const channel = new MessageChannel();
@@ -30,6 +34,7 @@ function initComlink() {
     sharedObject.getFolderPath = getFolderPath;
     sharedObject.getFilePath = getFilePath;
     sharedObject.ensureAuth = ensureAuth;
+    sharedObject.getUsername = getUsername;
     // console.log("shared object: ", _runInSW);
 }
 

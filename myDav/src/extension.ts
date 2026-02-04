@@ -45,6 +45,24 @@ export async function resetAuth() {
     }
 }
 
+export async function openDefaultFolder() {
+    console.log("opening defauilt");
+    let uriValue = "https://dav.puter.com/" + await fetch("/syscall/getUsername").then(r=>r.text());
+    let name = uriValue.split("/").pop()
+    let webdavUri = vscode.Uri.parse(uriValue.trim().replace(/^http/i, 'webdav'));
+
+
+    await configureAuthForUri(toBaseUri(webdavUri));
+
+    vscode.workspace.updateWorkspaceFolders(
+        0, 0,
+        {
+            uri: webdavUri,
+            name: name?.trim() ?? webdavUri.authority,
+        },
+    );
+}
+
 export async function openWebdav() {
     let uriValue = await fetch("/syscall/getFolderPicker").then(r=>r.text());
     
@@ -76,6 +94,7 @@ export async function openWebdav() {
 }
 
 export async function activate(context: vscode.ExtensionContext) {
+    console.log("registering webdav workspace")
     context.subscriptions.push(
         outputChannel = vscode.window.createOutputChannel('WebDAV Workspaces')
     );
@@ -91,13 +110,15 @@ export async function activate(context: vscode.ExtensionContext) {
             vscode.workspace.registerFileSystemProvider(scheme, new WebDAVFileSystemProvider(), { isCaseSensitive: true })
         );
     }
+    console.log("registering commands")
 
     log(`Register extension.remote.webdav.resetAuth command... `);
     context.subscriptions.push(vscode.commands.registerCommand('extension.remote.webdav.resetAuth', resetAuth));
 
     log(`Register extension.remote.webdav.open command... `);
     context.subscriptions.push(vscode.commands.registerCommand('extension.remote.webdav.open', openWebdav));
-
+    console.log("doing the default folder")
+    openDefaultFolder();
     outputChannel.appendLine('Extension has been initialized.');
 }
 

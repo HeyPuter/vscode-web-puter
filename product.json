@@ -17,14 +17,10 @@
       ]
     }
   },
-
+  
   "additionalBuiltinExtensions": [
     {
       "scheme": "https",
-      "path": "/myDav"
-    },
-    {
-      "scheme": "http",
       "path": "/myDav"
     }
   ]
