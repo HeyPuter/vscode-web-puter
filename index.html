@@ -22,7 +22,7 @@
     <link
       data-name="vs/workbench/workbench.web.main"
       rel="stylesheet"
-      href="./node_modules/vscode-web/dist/out/vs/workbench/workbench.web.main.css"
+      href="./vscode-web/dist/out/vs/workbench/workbench.web.main.css"
     />
   </head>
 
@@ -78,10 +78,10 @@
     Object.keys(self.webPackagePaths).map(function (key, index) {
       self.webPackagePaths[
         key
-      ] = `${location.href.split("/").slice(0,location.href.split("/").length - 1).join("/")}/node_modules/vscode-web/dist/node_modules/${key}/${self.webPackagePaths[key]}`;
+      ] = `${location.href.split("/").slice(0,location.href.split("/").length - 1).join("/")}/vscode-web/dist/node_modules/${key}/${self.webPackagePaths[key]}`;
     });
     require.config({
-      baseUrl: `${location.href.split("/").slice(0,location.href.split("/").length - 1).join("/")}/node_modules/vscode-web/dist/out`,
+      baseUrl: `${location.href.split("/").slice(0,location.href.split("/").length - 1).join("/")}/vscode-web/dist/out`,
       recordStats: true,
       trustedTypesPolicy: window.trustedTypes?.createPolicy('amdLoader', {
         createScriptURL(value) {
