@@ -39,6 +39,10 @@ let routes = {
                 await sharedObject.ensureAuth();
             }
             return new Response(await sharedObject.puter.authToken);
+        },
+        ['/syscall/getOpenedFile']: async function (response) {
+            await readyPromise;
+            return new Response((new URL(await sharedObject.href).searchParams.get("puter.item.path") ?? '').replace("~", "/" + await sharedObject.getUsername()));
         }
     }
 }

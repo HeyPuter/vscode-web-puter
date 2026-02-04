@@ -35,6 +35,7 @@ function initComlink() {
     sharedObject.getFilePath = getFilePath;
     sharedObject.ensureAuth = ensureAuth;
     sharedObject.getUsername = getUsername;
+    sharedObject.href = location.href;
     // console.log("shared object: ", _runInSW);
 }
 

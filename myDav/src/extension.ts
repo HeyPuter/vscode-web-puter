@@ -62,6 +62,13 @@ export async function openDefaultFolder() {
             name: name?.trim() ?? webdavUri.authority,
         },
     );
+    const openedPath = await fetch("/syscall/getOpenedFile").then(r=>r.text());
+    if (openedPath) {
+        console.log("opened path: ", openedPath);
+        const document = await vscode.workspace.openTextDocument(vscode.Uri.parse(("https://dav.puter.com/" + openedPath).trim().replace(/^http/i, 'webdav')));
+        await vscode.window.showTextDocument(document);
+        console.log("done opening")
+    } 
 }
 
 export async function openWebdav() {
