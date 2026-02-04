@@ -50,12 +50,13 @@ export async function openDefaultFolder() {
     let uriValue = "https://dav.puter.com/" + await fetch("/syscall/getUsername").then(r=>r.text());
     let name = uriValue.split("/").pop()
     let webdavUri = vscode.Uri.parse(uriValue.trim().replace(/^http/i, 'webdav'));
+    console.log("webdavuri: ", webdavUri);
 
 
     await configureAuthForUri(toBaseUri(webdavUri));
 
     vscode.workspace.updateWorkspaceFolders(
-        0, 0,
+        0, 1,
         {
             uri: webdavUri,
             name: name?.trim() ?? webdavUri.authority,
@@ -73,6 +74,7 @@ export async function openWebdav() {
     }
 
     let webdavUri = vscode.Uri.parse(uriValue.trim().replace(/^http/i, 'webdav'));
+    console.log("webdavuri: ", webdavUri);
 
     // let name = await vscode.window.showInputBox({
     //     placeHolder: 'Press ENTER to use default ...',

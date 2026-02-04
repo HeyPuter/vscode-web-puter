@@ -22,19 +22,13 @@
         "onFileSystem:webdavs",
         "*",
         "onCommand:extension.remote.webdav.open",
-        "onCommand:extension.remote.webdav.resetAuth"
     ],
     "browser": "./out/main.js",
     "contributes": {
         "commands": [
             {
                 "command": "extension.remote.webdav.open",
-                "title": "Open WebDAV Workspace...",
-                "category": "Remote WebDAV"
-            },
-            {
-                "command": "extension.remote.webdav.resetAuth",
-                "title": "Reset WebDAV Authentication ...",
+                "title": "Open Puter Folder...",
                 "category": "Remote WebDAV"
             }
         ],

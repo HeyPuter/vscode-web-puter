@@ -17,6 +17,10 @@
       ]
     }
   },
+  "folderUri": {
+		"scheme": "webdavs",
+		"path": "dav.puter.com/"
+	},
   
   "additionalBuiltinExtensions": [
     {
