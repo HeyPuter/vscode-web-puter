@@ -6,7 +6,7 @@
     "./myExt"
   ],
   "scripts": {
-    "build": "cd myDav && pnpm build",
+    "build": "cd myDav && npm run build",
     "package": "bash package.sh",
     "start": "node ./http.js"
   },
