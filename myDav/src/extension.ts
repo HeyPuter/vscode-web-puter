@@ -12,6 +12,8 @@ async function getAuthToken(): Promise<string> {
     return authToken;
 }
 
+let authConfigured: Record<string, boolean> = {};
+
 globalThis.Buffer = Buffer;
 console.log(Buffer)
 
@@ -216,6 +218,10 @@ export class WebDAVFileSystemProvider implements vscode.FileSystemProvider {
         try {
             if (!connections[baseUri]) {
                 connections[baseUri] = this.createClient(baseUri);
+            }
+            if (!authConfigured[baseUri]) {
+                await configureAuthForUri(baseUri);
+                authConfigured[baseUri] = true;
             }
             return await action(await connections[baseUri]);
         } catch (e) {
