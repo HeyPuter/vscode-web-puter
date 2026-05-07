@@ -1,14 +1,14 @@
 import * as vscode from 'vscode';
 import { FileStat, WebDAVClient, WebDAVClientOptions, WebDAVClientError, AuthType, createClient } from 'webdav';
 import { parse } from 'date-fns';
-import {Buffer} from "buffer"
+import { Buffer } from "buffer"
 
-let authToken: string|undefined = undefined;
+let authToken: string | undefined = undefined;
 
 async function getAuthToken(): Promise<string> {
-    if (authToken) 
+    if (authToken)
         return authToken;
-    authToken = await fetch("/syscall/getToken").then(r=>r.text()) as string;
+    authToken = await fetch("/syscall/getToken").then(r => r.text()) as string;
     return authToken;
 }
 
@@ -49,7 +49,7 @@ export async function resetAuth() {
 
 export async function openDefaultFolder() {
     console.log("opening defauilt");
-    let uriValue = "https://dav.puter.com/" + await fetch("/syscall/getUsername").then(r=>r.text());
+    let uriValue = "https://dav.puter.com/" + await fetch("/syscall/getUsername").then(r => r.text());
     let name = uriValue.split("/").pop()
     let webdavUri = vscode.Uri.parse(uriValue.trim().replace(/^http/i, 'webdav'));
     console.log("webdavuri: ", webdavUri);
@@ -64,18 +64,18 @@ export async function openDefaultFolder() {
             name: name?.trim() ?? webdavUri.authority,
         },
     );
-    const openedPath = await fetch("/syscall/getOpenedFile").then(r=>r.text());
+    const openedPath = await fetch("/syscall/getOpenedFile").then(r => r.text());
     if (openedPath) {
         console.log("opened path: ", openedPath);
         const document = await vscode.workspace.openTextDocument(vscode.Uri.parse(("https://dav.puter.com/" + openedPath).trim().replace(/^http/i, 'webdav')));
         await vscode.window.showTextDocument(document);
         console.log("done opening")
-    } 
+    }
 }
 
 export async function openWebdav() {
-    let uriValue = await fetch("/syscall/getFolderPicker").then(r=>r.text());
-    
+    let uriValue = await fetch("/syscall/getFolderPicker").then(r => r.text());
+
     if (!uriValue) {
         return;
     } else {
@@ -154,8 +154,8 @@ export async function configureAuthForUri(uriKey: string): Promise<void> {
     delete connections[uriKey]; // The conections are keyed on the baseUri
     let authOptions = ["None", "Basic", "Digest"];
 
-    let settings: AuthSettings = { 
-        auth: "Basic" 
+    let settings: AuthSettings = {
+        auth: "Basic"
     };
     if (settings.auth === "Basic" || settings.auth === "Digest") {
         settings.user = "-token";
@@ -216,12 +216,12 @@ export class WebDAVFileSystemProvider implements vscode.FileSystemProvider {
         log(`${operation}: ${uri}`);
         let baseUri = toBaseUri(uri);
         try {
-            if (!connections[baseUri]) {
-                connections[baseUri] = this.createClient(baseUri);
-            }
             if (!authConfigured[baseUri]) {
                 await configureAuthForUri(baseUri);
                 authConfigured[baseUri] = true;
+            }
+            if (!connections[baseUri]) {
+                connections[baseUri] = this.createClient(baseUri);
             }
             return await action(await connections[baseUri]);
         } catch (e) {
@@ -253,7 +253,7 @@ export class WebDAVFileSystemProvider implements vscode.FileSystemProvider {
 
     public async readFile(uri: vscode.Uri): Promise<Uint8Array> {
         return await this.forConnection("readFile", uri, async webdav => {
-            return new Uint8Array(await (await fetch("https://dav.puter.com" + toWebDAVPath(uri), {headers: {"Authorization": "Bearer " + await getAuthToken()}})).arrayBuffer())
+            return new Uint8Array(await (await fetch("https://dav.puter.com" + toWebDAVPath(uri), { headers: { "Authorization": "Bearer " + await getAuthToken() } })).arrayBuffer())
             // let body = await webdav.getFileContents(toWebDAVPath(uri));
             // if (typeof body === "string") {
             //     return Buffer.from(body, 'binary');
@@ -290,7 +290,7 @@ export class WebDAVFileSystemProvider implements vscode.FileSystemProvider {
 
     public async writeFile(uri: vscode.Uri, content: Uint8Array, options: { create: boolean, overwrite: boolean }): Promise<void> {
         return await this.forConnection("stat", uri, async webdav => {
-            (await fetch ("https://dav.puter.com" + toWebDAVPath(uri), {method: "PUT", body: new Blob([content as BlobPart]), headers: {"Authorization": "Bearer " + await getAuthToken()}}))
+            (await fetch("https://dav.puter.com" + toWebDAVPath(uri), { method: "PUT", body: new Blob([content as BlobPart]), headers: { "Authorization": "Bearer " + await getAuthToken() } }))
 
             // await this.throwIfWriteFileIsNotAllowed(uri, options);
             // await webdav.putFileContents(toWebDAVPath(uri), content, { overwrite: options.overwrite });
