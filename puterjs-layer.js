@@ -1,10 +1,6 @@
 import * as Comlink from "https://unpkg.com/comlink/dist/esm/comlink.mjs";
 
-Comlink.expose(puter);
-
 window.sharedObject = {};
-
-navigator.serviceWorker.register("./sw.js", {scope: "/"});
 
 async function getFolderPath() {
     console.log("recieved a request from the heavens to get a file picker, obliging");
@@ -15,7 +11,7 @@ async function getFilePath() {
 }
 async function ensureAuth() {
     if (!puter.authToken) {
-        await ensureAuth();
+        await puter.auth.signIn();
     }
 }
 async function getUsername() {
@@ -39,9 +35,22 @@ function initComlink() {
     // console.log("shared object: ", _runInSW);
 }
 
+// The SW loses our port whenever the browser stops it for being idle; it asks for a new one
+navigator.serviceWorker.addEventListener('message', (event) => {
+    if (event.data === "requestPort" && navigator.serviceWorker.controller) {
+        initComlink();
+    }
+});
+navigator.serviceWorker.startMessages();
+
+// Only reload once the worker is active. Reloading while register() is still in
+// flight cancels it in WebKit (the page fetches the SW script), so an
+// unconditional reload loops forever.
+await navigator.serviceWorker.register("./sw.js", {scope: "/"});
 if (navigator.serviceWorker.controller) {
     initComlink();
 } else {
+    await navigator.serviceWorker.ready;
     window.location.reload();
 }
 
