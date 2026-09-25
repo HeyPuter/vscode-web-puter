@@ -4,6 +4,15 @@ let token = undefined;
 let sharedObject = {};
 let readyPromise = new Promise(res => {
     self.addEventListener('message', (event) => {
+        // Security: Validate that the message originates from the same origin
+        // to prevent cross-origin pages from establishing a Comlink bridge.
+        // event.origin is available in Worker contexts (spec: https://html.spec.whatwg.org/multipage/workers.html#worker-processing-model)
+        const sourceOrigin = event.origin || self.location.origin;
+        if (sourceOrigin !== self.location.origin) {
+            console.warn(`[Security] Rejected Comlink message from untrusted origin: ${sourceOrigin}`);
+            return;
+        }
+
         if (event.data instanceof MessagePort) {
             sharedObject = Comlink.wrap(event.data);
             event.data.start();
